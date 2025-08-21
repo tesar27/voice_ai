@@ -18,6 +18,7 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
     volume,
     error,
     callDuration,
+    isLoading,
     startCall,
     endCall,
     toggleMute,
@@ -30,12 +31,9 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
   };
 
   const handleStartDemo = () => {
-    if (publicKey) {
-      startCall();
-    } else {
-      setShowDemo(true);
-    }
-  };
+    // Always try to start the call since we now have API routes
+    startCall()
+  }
 
   const handleCloseDemo = () => {
     setShowDemo(false);
@@ -48,10 +46,19 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
         {!isCallActive && !showDemo ? (
           <button
             onClick={handleStartDemo}
-            className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 animate-pulse"
-            title="Talk to AI Agent"
+            disabled={isLoading}
+            className={`group text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform ${
+              isLoading 
+                ? 'bg-gray-600 cursor-not-allowed' 
+                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-110 animate-pulse'
+            }`}
+            title={isLoading ? "Starting AI Agent..." : "Talk to AI Agent"}
           >
-            <Phone size={28} />
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white"></div>
+            ) : (
+              <Phone size={28} />
+            )}
           </button>
         ) : isCallActive ? (
           /* Call Interface */
