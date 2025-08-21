@@ -1,9 +1,9 @@
 - [x] Verify that the copilot-instructions.md file in the .github directory is created. ✅
 
-- [ ] Clarify Project Requirements
+- [x] Clarify Project Requirements ✅
 	<!-- Next.js 14 TypeScript project with Vapi.ai voice AI integration and Tailwind CSS -->
 
-- [ ] Scaffold the Project
+- [x] Scaffold the Project ✅
 	<!-- Create Next.js project with TypeScript, Tailwind CSS, App Router, and src directory -->
 
 - [ ] Customize the Project
