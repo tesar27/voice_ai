@@ -8,7 +8,9 @@ import VoiceChat from "@/components/ui/VoiceChat";
 export default function Home() {
   const handleStartVoiceChat = () => {
     // This will trigger the floating voice chat button
-    const voiceChatButton = document.querySelector('[title="Talk to AI Agent"], [title="Starting AI Agent..."]') as HTMLButtonElement;
+    const voiceChatButton = document.querySelector(
+      '[title="Talk to AI Agent"], [title="Starting AI Agent..."]'
+    ) as HTMLButtonElement;
     if (voiceChatButton) {
       voiceChatButton.click();
     }

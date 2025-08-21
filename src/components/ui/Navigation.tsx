@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import Link from 'next/link'
-import { Menu, X } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
 
 interface NavigationProps {
-  onStartVoiceChat?: () => void
+  onStartVoiceChat?: () => void;
 }
 
 export default function Navigation({ onStartVoiceChat }: NavigationProps) {
@@ -45,7 +45,7 @@ export default function Navigation({ onStartVoiceChat }: NavigationProps) {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <button 
+            <button
               onClick={onStartVoiceChat}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200"
             >
@@ -78,10 +78,10 @@ export default function Navigation({ onStartVoiceChat }: NavigationProps) {
                   {item.name}
                 </Link>
               ))}
-              <button 
+              <button
                 onClick={() => {
-                  setIsOpen(false)
-                  onStartVoiceChat?.()
+                  setIsOpen(false);
+                  onStartVoiceChat?.();
                 }}
                 className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200"
               >

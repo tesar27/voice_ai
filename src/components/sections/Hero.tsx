@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { ChevronDown, Play } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { ChevronDown, Play } from "lucide-react";
 
 interface HeroProps {
-  onStartVoiceChat?: () => void
+  onStartVoiceChat?: () => void;
 }
 
 export default function Hero({ onStartVoiceChat }: HeroProps) {
@@ -63,7 +63,7 @@ export default function Hero({ onStartVoiceChat }: HeroProps) {
             }`}
           >
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-              <button 
+              <button
                 onClick={onStartVoiceChat}
                 className="group bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 hover:scale-105"
               >

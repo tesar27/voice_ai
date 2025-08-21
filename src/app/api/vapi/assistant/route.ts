@@ -11,6 +11,9 @@ export async function POST() {
   }
 
   try {
+    // Log the API key format for debugging (first 8 chars only)
+    console.log('Using Vapi API key:', VAPI_API_KEY.slice(0, 8) + '...')
+    
     const response = await fetch('https://api.vapi.ai/assistant', {
       method: 'POST',
       headers: {
@@ -48,18 +51,63 @@ export async function POST() {
       }),
     })
 
+    console.log('Vapi assistant API response status:', response.status)
+
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Vapi API error:', errorText)
-      throw new Error(`Vapi API error: ${response.statusText}`)
+      console.error('Vapi assistant API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      })
+      
+      // Check for specific error types
+      if (response.status === 401) {
+        return NextResponse.json(
+          { 
+            error: 'Invalid API key',
+            details: 'Please check your Vapi.ai API key configuration',
+            status: 401
+          },
+          { status: 401 }
+        )
+      } else if (response.status === 403) {
+        return NextResponse.json(
+          { 
+            error: 'API key not authorized',
+            details: 'Your Vapi.ai API key may need to be activated or have insufficient permissions',
+            status: 403
+          },
+          { status: 403 }
+        )
+      }
+      
+      return NextResponse.json(
+        { 
+          error: `Vapi API error: ${response.statusText}`,
+          details: errorText,
+          status: response.status
+        },
+        { status: response.status }
+      )
     }
 
     const assistant = await response.json()
-    return NextResponse.json({ assistantId: assistant.id })
-  } catch (error) {
+    console.log('Successfully created assistant:', assistant.id)
+    return NextResponse.json({ success: true, assistantId: assistant.id })
+  } catch (error: any) {
     console.error('Error creating assistant:', error)
+    
+    // Handle network errors specifically
+    if (error.code === 'ENOTFOUND' || error.message.includes('fetch')) {
+      return NextResponse.json(
+        { error: 'Network error - unable to reach Vapi.ai API' },
+        { status: 503 }
+      )
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to create assistant' },
+      { error: 'Failed to create assistant', details: error.message },
       { status: 500 }
     )
   }

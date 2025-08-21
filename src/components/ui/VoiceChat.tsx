@@ -32,8 +32,8 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
 
   const handleStartDemo = () => {
     // Always try to start the call since we now have API routes
-    startCall()
-  }
+    startCall();
+  };
 
   const handleCloseDemo = () => {
     setShowDemo(false);
@@ -48,9 +48,9 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
             onClick={handleStartDemo}
             disabled={isLoading}
             className={`group text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform ${
-              isLoading 
-                ? 'bg-gray-600 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-110 animate-pulse'
+              isLoading
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-110 animate-pulse"
             }`}
             title={isLoading ? "Starting AI Agent..." : "Talk to AI Agent"}
           >

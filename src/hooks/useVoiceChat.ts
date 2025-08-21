@@ -53,10 +53,15 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create assistant')
+        console.error('Assistant creation error:', errorData)
+        throw new Error(errorData.details || errorData.error || 'Failed to create assistant')
       }
 
       const data = await response.json()
+      if (!data.success || !data.assistantId) {
+        throw new Error('Invalid response from assistant creation API')
+      }
+      
       currentAssistantId.current = data.assistantId
       return data.assistantId
     } catch (err: any) {
@@ -95,10 +100,22 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to start call')
+        console.error('Call start error:', errorData)
+        
+        // If it's a 401/403 (API key issue), show helpful message
+        if (errorData.status === 401 || errorData.status === 403) {
+          throw new Error('API key issue: ' + (errorData.details || errorData.error))
+        }
+        
+        // For other errors, show the specific error
+        throw new Error(errorData.details || errorData.error || 'Failed to start call')
       }
 
       const callData = await response.json()
+      
+      if (!callData.success) {
+        throw new Error(callData.error || 'Call failed to start properly')
+      }
       
       // Simulate call active state (in real implementation, you'd use Vapi's web client)
       setIsCallActive(true)
@@ -115,6 +132,7 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
       }, 2000)
 
     } catch (err: any) {
+      console.error('Voice chat error:', err)
       setError(err.message || 'Failed to start call')
     } finally {
       setIsLoading(false)
