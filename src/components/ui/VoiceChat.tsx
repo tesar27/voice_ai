@@ -1,17 +1,17 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Mic, MicOff, Phone, PhoneOff, Volume2, VolumeX } from 'lucide-react'
-import { useVoiceChat } from '@/hooks/useVoiceChat'
+import { useState } from "react";
+import { Mic, MicOff, Phone, PhoneOff, Volume2, VolumeX } from "lucide-react";
+import { useVoiceChat } from "@/hooks/useVoiceChat";
 
 interface VoiceChatProps {
-  publicKey?: string
-  assistantId?: string
+  publicKey?: string;
+  assistantId?: string;
 }
 
 export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
-  const [showDemo, setShowDemo] = useState(false)
-  
+  const [showDemo, setShowDemo] = useState(false);
+
   const {
     isCallActive,
     isMuted,
@@ -20,26 +20,26 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
     callDuration,
     startCall,
     endCall,
-    toggleMute
-  } = useVoiceChat({ publicKey, assistantId })
+    toggleMute,
+  } = useVoiceChat({ publicKey, assistantId });
 
   const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   const handleStartDemo = () => {
     if (publicKey) {
-      startCall()
+      startCall();
     } else {
-      setShowDemo(true)
+      setShowDemo(true);
     }
-  }
+  };
 
   const handleCloseDemo = () => {
-    setShowDemo(false)
-  }
+    setShowDemo(false);
+  };
 
   return (
     <>
@@ -78,7 +78,7 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
                 <span className="text-sm text-gray-400">Voice Level</span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
+                <div
                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-200"
                   style={{ width: `${Math.min(volume * 100, 100)}%` }}
                 ></div>
@@ -90,15 +90,15 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
               <button
                 onClick={toggleMute}
                 className={`p-3 rounded-full transition-all duration-200 ${
-                  isMuted 
-                    ? 'bg-red-600 hover:bg-red-700' 
-                    : 'bg-gray-700 hover:bg-gray-600'
+                  isMuted
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-gray-700 hover:bg-gray-600"
                 }`}
                 title={isMuted ? "Unmute" : "Mute"}
               >
                 {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
               </button>
-              
+
               <button
                 onClick={endCall}
                 className="bg-red-600 hover:bg-red-700 p-3 rounded-full transition-all duration-200"
@@ -126,19 +126,23 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
               <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Phone size={32} className="text-white" />
               </div>
-              
-              <h3 className="text-2xl font-bold text-white mb-4">AI Agent Demo</h3>
-              
+
+              <h3 className="text-2xl font-bold text-white mb-4">
+                AI Agent Demo
+              </h3>
+
               <p className="text-gray-300 mb-6 leading-relaxed">
-                Experience my AI-powered voice assistant! This demo showcases advanced voice AI 
-                technology using Vapi.ai integration. The AI agent can discuss my background, 
-                projects, and expertise in real-time conversation.
+                Experience my AI-powered voice assistant! This demo showcases
+                advanced voice AI technology using Vapi.ai integration. The AI
+                agent can discuss my background, projects, and expertise in
+                real-time conversation.
               </p>
 
               <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4 mb-6">
                 <p className="text-blue-200 text-sm">
-                  <strong>Note:</strong> To enable the full voice AI experience, a Vapi.ai API key is required. 
-                  This demo shows the interface and functionality.
+                  <strong>Note:</strong> To enable the full voice AI experience,
+                  a Vapi.ai API key is required. This demo shows the interface
+                  and functionality.
                 </p>
               </div>
 
@@ -158,5 +162,5 @@ export default function VoiceChat({ publicKey, assistantId }: VoiceChatProps) {
         </div>
       )}
     </>
-  )
+  );
 }

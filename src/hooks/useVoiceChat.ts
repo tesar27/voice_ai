@@ -87,16 +87,16 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
     
     try {
       setError(null)
-      // For now, we'll create a simple assistant configuration
-      // In production, you'd want to use a pre-configured assistantId
+      
+      // Create assistant configuration with proper types
       const assistantConfig = {
         name: "Yerbolat's AI Assistant",
         model: {
-          provider: "openai",
-          model: "gpt-3.5-turbo",
+          provider: "openai" as const,
+          model: "gpt-3.5-turbo" as const,
           messages: [
             {
-              role: "system",
+              role: "system" as const,
               content: `You are Yerbolat's AI assistant. You represent Yerbolat Tazhkeyev, a skilled AI engineer and developer. 
 
               About Yerbolat:
@@ -113,7 +113,7 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
           ]
         },
         voice: {
-          provider: "playht",
+          provider: "playht" as const,
           voiceId: "jennifer"
         }
       }

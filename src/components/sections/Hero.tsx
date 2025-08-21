@@ -1,26 +1,35 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { ChevronDown, Play } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { ChevronDown, Play } from "lucide-react";
 
 export default function Hero() {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true)
-  }, [])
+    setIsVisible(true);
+  }, []);
 
   return (
-    <section id="home" className="min-h-screen bg-black text-white relative overflow-hidden">
+    <section
+      id="home"
+      className="min-h-screen bg-black text-white relative overflow-hidden"
+    >
       {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-transparent pointer-events-none" />
-      
+
       <div className="container mx-auto px-4 h-screen flex items-center justify-center relative z-10">
         <div className="text-center max-w-4xl">
           {/* Main heading with animation */}
-          <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div
+            className={`transition-all duration-1000 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10"
+            }`}
+          >
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              I Build{' '}
+              I Build{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
                 AI Agents
               </span>
@@ -28,15 +37,27 @@ export default function Hero() {
           </div>
 
           {/* Subtitle */}
-          <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div
+            className={`transition-all duration-1000 delay-300 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10"
+            }`}
+          >
             <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Transforming businesses with intelligent automation and voice AI solutions. 
-              Experience the future of human-AI interaction.
+              Transforming businesses with intelligent automation and voice AI
+              solutions. Experience the future of human-AI interaction.
             </p>
           </div>
 
           {/* CTA buttons */}
-          <div className={`transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div
+            className={`transition-all duration-1000 delay-500 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10"
+            }`}
+          >
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               <button className="group bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 hover:scale-105">
                 <Play size={20} />
@@ -49,8 +70,16 @@ export default function Hero() {
           </div>
 
           {/* Trusted by section */}
-          <div className={`transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <p className="text-sm text-gray-500 mb-6 uppercase tracking-wider">Trusted by innovative companies</p>
+          <div
+            className={`transition-all duration-1000 delay-700 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10"
+            }`}
+          >
+            <p className="text-sm text-gray-500 mb-6 uppercase tracking-wider">
+              Trusted by innovative companies
+            </p>
             <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
               <div className="text-2xl font-bold text-gray-400">TECHCORP</div>
               <div className="text-2xl font-bold text-gray-400">INNOVATE</div>
@@ -82,5 +111,5 @@ export default function Hero() {
         ))}
       </div>
     </section>
-  )
+  );
 }
