@@ -1,8 +1,12 @@
-import { useState } from "react";
-import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { useState } from 'react'
+import Link from 'next/link'
+import { Menu, X } from 'lucide-react'
 
-export default function Navigation() {
+interface NavigationProps {
+  onStartVoiceChat?: () => void
+}
+
+export default function Navigation({ onStartVoiceChat }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -41,7 +45,10 @@ export default function Navigation() {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+            <button 
+              onClick={onStartVoiceChat}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200"
+            >
               Talk to AI Agent
             </button>
           </div>
@@ -71,7 +78,13 @@ export default function Navigation() {
                   {item.name}
                 </Link>
               ))}
-              <button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+              <button 
+                onClick={() => {
+                  setIsOpen(false)
+                  onStartVoiceChat?.()
+                }}
+                className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200"
+              >
                 Talk to AI Agent
               </button>
             </div>

@@ -1,9 +1,13 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { ChevronDown, Play } from "lucide-react";
+import { useState, useEffect } from 'react'
+import { ChevronDown, Play } from 'lucide-react'
 
-export default function Hero() {
+interface HeroProps {
+  onStartVoiceChat?: () => void
+}
+
+export default function Hero({ onStartVoiceChat }: HeroProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -59,7 +63,10 @@ export default function Hero() {
             }`}
           >
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-              <button className="group bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 hover:scale-105">
+              <button 
+                onClick={onStartVoiceChat}
+                className="group bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 hover:scale-105"
+              >
                 <Play size={20} />
                 Talk to My AI Agent
               </button>
