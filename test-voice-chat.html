@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Chat Test</title>
+    <script src="https://unpkg.com/@vapi-ai/web@latest/dist/index.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #374151;
+        }
+        .log {
+            background: #111827;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Voice Chat Test Page</h1>
+    
+    <div class="status" id="status">
+        Status: Ready
+    </div>
+
+    <button id="testEnvBtn">Test Environment</button>
+    <button id="createAssistantBtn">Create Assistant</button>
+    <button id="startCallBtn" disabled>Start Voice Call</button>
+    <button id="endCallBtn" disabled>End Call</button>
+
+    <div class="log" id="log"></div>
+
+    <script>
+        let vapi = null;
+        let currentAssistantId = null;
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').textContent = `Status: ${message}`;
+        }
+
+        document.getElementById('testEnvBtn').addEventListener('click', async () => {
+            log('Testing environment configuration...');
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                log(`Environment test result: ${JSON.stringify(data, null, 2)}`);
+                updateStatus(data.envCheck ? 'Environment OK' : 'Environment Error');
+            } catch (error) {
+                log(`Environment test error: ${error.message}`);
+                updateStatus('Environment Error');
+            }
+        });
+
+        document.getElementById('createAssistantBtn').addEventListener('click', async () => {
+            log('Creating Vapi assistant...');
+            updateStatus('Creating assistant...');
+            try {
+                const response = await fetch('/api/vapi/assistant', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                log(`Assistant created: ${JSON.stringify(data, null, 2)}`);
+                
+                if (data.success && data.assistantId) {
+                    currentAssistantId = data.assistantId;
+                    document.getElementById('startCallBtn').disabled = false;
+                    updateStatus('Assistant ready');
+                    log(`Assistant ID stored: ${currentAssistantId}`);
+                } else {
+                    throw new Error(data.error || 'Failed to create assistant');
+                }
+            } catch (error) {
+                log(`Assistant creation error: ${error.message}`);
+                updateStatus('Assistant creation failed');
+            }
+        });
+
+        document.getElementById('startCallBtn').addEventListener('click', async () => {
+            if (!currentAssistantId) {
+                log('No assistant ID available');
+                return;
+            }
+
+            log('Starting voice call...');
+            updateStatus('Starting call...');
+            try {
+                const response = await fetch('/api/vapi/call', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        assistantId: currentAssistantId
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                log(`Call started: ${JSON.stringify(data, null, 2)}`);
+                
+                if (data.success) {
+                    document.getElementById('startCallBtn').disabled = true;
+                    document.getElementById('endCallBtn').disabled = false;
+                    updateStatus('Call active');
+                } else {
+                    throw new Error(data.error || 'Failed to start call');
+                }
+            } catch (error) {
+                log(`Call start error: ${error.message}`);
+                updateStatus('Call failed');
+            }
+        });
+
+        document.getElementById('endCallBtn').addEventListener('click', () => {
+            log('Ending voice call...');
+            if (vapi) {
+                vapi.stop();
+            }
+            document.getElementById('startCallBtn').disabled = false;
+            document.getElementById('endCallBtn').disabled = true;
+            updateStatus('Call ended');
+        });
+
+        // Initialize
+        log('Voice chat test page loaded');
+        updateStatus('Ready');
+    </script>
+</body>
+</html>
