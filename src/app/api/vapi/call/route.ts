@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const VAPI_API_KEY = process.env.VAPI_API_KEY
+const VAPI_PRIVATE_KEY = process.env.VAPI_PRIVATE_KEY || process.env.VAPI_API_KEY
 
 export async function POST(request: NextRequest) {
-  if (!VAPI_API_KEY) {
+  if (!VAPI_PRIVATE_KEY) {
     return NextResponse.json(
-      { error: 'VAPI_API_KEY not configured' },
+      { error: 'VAPI_PRIVATE_KEY not configured' },
       { status: 500 }
     )
   }
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const response = await fetch('https://api.vapi.ai/call/web', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${VAPI_API_KEY}`,
+        'Authorization': `Bearer ${VAPI_PRIVATE_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

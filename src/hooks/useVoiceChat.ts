@@ -21,15 +21,69 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
   const vapi = useRef<Vapi | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const currentAssistantId = useRef<string | null>(null)
+  const publicKeyRef = useRef<string | null>(null)
+
+  // Fetch public key from server
+  const fetchPublicKey = useCallback(async (): Promise<string | null> => {
+    try {
+      const response = await fetch('/api/vapi/public-key')
+      if (!response.ok) {
+        throw new Error('Failed to fetch public key')
+      }
+      const data = await response.json()
+      return data.publicKey
+    } catch (error) {
+      console.error('Error fetching public key:', error)
+      return null
+    }
+  }, [])
 
   useEffect(() => {
-    // Initialize Vapi with a dummy public key for API route usage
-    // We'll use our API routes instead of direct Vapi client calls
-    try {
-      vapi.current = new Vapi("dummy-key") // We won't use this directly
-    } catch (err: any) {
-      console.log('Vapi initialization note:', err.message)
+    // Initialize Vapi with public key
+    const initVapi = async () => {
+      const key = publicKey || publicKeyRef.current || await fetchPublicKey()
+      if (key) {
+        publicKeyRef.current = key
+        try {
+          vapi.current = new Vapi(key)
+          
+          // Set up event listeners
+          vapi.current.on('call-start', () => {
+            console.log('Call started')
+            setIsCallActive(true)
+            setIsConnected(true)
+          })
+          
+          vapi.current.on('call-end', () => {
+            console.log('Call ended')
+            setIsCallActive(false)
+            setIsConnected(false)
+            setCallDuration(0)
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current)
+              intervalRef.current = null
+            }
+          })
+          
+          vapi.current.on('error', (error: any) => {
+            console.error('Vapi error:', error)
+            setError(error.message || 'Voice chat error occurred')
+            setIsCallActive(false)
+            setIsConnected(false)
+          })
+          
+          vapi.current.on('volume-level', (level: number) => {
+            setVolume(level)
+          })
+          
+        } catch (err: any) {
+          console.error('Vapi initialization error:', err.message)
+          setError('Failed to initialize voice chat')
+        }
+      }
     }
+    
+    initVapi()
 
     return () => {
       if (intervalRef.current) {
@@ -39,7 +93,7 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
         vapi.current.stop()
       }
     }
-  }, [])
+  }, [publicKey, fetchPublicKey])
 
   const createAssistant = useCallback(async (): Promise<string | null> => {
     try {
@@ -73,6 +127,11 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
   }, [])
 
   const startCall = useCallback(async () => {
+    if (!vapi.current) {
+      setError('Voice chat not initialized')
+      return
+    }
+
     setError(null)
     setIsLoading(true)
 
@@ -87,49 +146,13 @@ export function useVoiceChat({ publicKey, assistantId }: UseVoiceChatProps = {})
         }
       }
 
-      // Start the call using our API route
-      const response = await fetch('/api/vapi/call', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          assistantId: useAssistantId
-        })
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        console.error('Call start error:', errorData)
-        
-        // If it's a 401/403 (API key issue), show helpful message
-        if (errorData.status === 401 || errorData.status === 403) {
-          throw new Error('API key issue: ' + (errorData.details || errorData.error))
-        }
-        
-        // For other errors, show the specific error
-        throw new Error(errorData.details || errorData.error || 'Failed to start call')
-      }
-
-      const callData = await response.json()
-      
-      if (!callData.success) {
-        throw new Error(callData.error || 'Call failed to start properly')
-      }
-      
-      // Simulate call active state (in real implementation, you'd use Vapi's web client)
-      setIsCallActive(true)
-      setIsConnected(true)
+      // Start the call using Vapi SDK
+      await vapi.current.start(useAssistantId)
       
       // Start duration timer
       intervalRef.current = setInterval(() => {
         setCallDuration(prev => prev + 1)
       }, 1000)
-
-      // Simulate some voice activity
-      setTimeout(() => {
-        setVolume(Math.random() * 0.8 + 0.2)
-      }, 2000)
 
     } catch (err: any) {
       console.error('Voice chat error:', err)
